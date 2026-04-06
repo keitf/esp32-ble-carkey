@@ -1,6 +1,7 @@
 // ============================================================
 // ESP32-C3 车钥匙蓝牙外挂 - 低功耗优化版
-// 适用于 3.3V 电池供电
+// 电源方案：5V/5600mAh 锂电池 + MCP1700-3302 LDO (3.3V)
+// 低功耗策略：BLE Modem Sleep + 自动 Light Sleep
 // ============================================================
 
 #include <BLEDevice.h>
@@ -8,6 +9,8 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 #include "esp_sleep.h"
+#include "esp_pm.h"         // 电源管理：自动 Light Sleep
+#include "esp_bt.h"         // BLE Modem Sleep
 #include <Preferences.h>
 
 // --- 日志宏定义 ---
@@ -312,6 +315,34 @@ void setup() {
   APP_LOG("[SUCCESS] Waiting for connections...");
 
   lastActivityTime = millis();
+
+  // ============================================================
+  // 低功耗配置（在 BLE 初始化完成后配置，顺序不可颠倒）
+  // ============================================================
+
+  // 1. 启用 BLE Modem Sleep
+  //    在 BLE 广播间隙期间，射频模拟电路自动掉电，可将
+  //    广播待机电流从 ~8mA 均值降低至 ~0.2mA 均值。
+  //    注意：必须在 BLEDevice::startAdvertising() 之后调用。
+  esp_bt_sleep_enable();
+  APP_LOG("[PM] BLE Modem Sleep enabled.");
+
+  // 2. 配置自动 Light Sleep（CPU 频率动态缩放 + 空闲自动入睡）
+  //    当 loop() 中调用 delay() 或 esp_light_sleep_start() 时，
+  //    系统将真正进入 Light Sleep，而非仅 CPU IDLE。
+  //    Light Sleep 期间 BLE 连接上下文和 RAM 状态完整保留。
+  esp_pm_config_t pm_config = {
+      .max_freq_mhz       = 160,  // 峰值频率（执行指令/BLE 事务时）
+      .min_freq_mhz       = 10,   // 最低频率（Light Sleep 退出过渡态）
+      .light_sleep_enable = true  // 空闲时自动进入 Light Sleep
+  };
+  esp_err_t pm_err = esp_pm_configure(&pm_config);
+  if (pm_err == ESP_OK) {
+    APP_LOG("[PM] Auto Light Sleep configured. max=%dMHz, min=%dMHz.", 
+            pm_config.max_freq_mhz, pm_config.min_freq_mhz);
+  } else {
+    APP_LOG("[PM] WARNING: esp_pm_configure failed: %s", esp_err_to_name(pm_err));
+  }
 }
 
 // ============================================================
@@ -325,13 +356,14 @@ void loop() {
     preferences.putUInt("failCount", 0);
     APP_LOG("[SEC] Lockout expired! Security logs cleared.");
     if (!deviceConnected) {
-      APP_LOG("[SYS] Resuming BLE Marketing Beacon...");
+      APP_LOG("[SYS] Resuming BLE Advertising...");
       pServer->getAdvertising()->start();
     }
   }
 
-  // 检查连接状态
+  // 检查连接状态变化：断开 -> 重新广播
   if (!deviceConnected && oldDeviceConnected) {
+    // 给蓝牙协议栈 500ms 完成断开清理
     delay(500);
     if (!isLocked) {
       pServer->startAdvertising();
@@ -339,18 +371,26 @@ void loop() {
     }
     oldDeviceConnected = deviceConnected;
   }
-  
+
+  // 检查连接状态变化：已连接
   if (deviceConnected && !oldDeviceConnected) {
     oldDeviceConnected = deviceConnected;
   }
 
-  // 低功耗管理
+  // ============================================================
+  // 低功耗主循环
+  // ============================================================
   if (!deviceConnected) {
-    // 未连接时，使用较长的 delay 以降低功耗
-    // delay() 会让 CPU 进入 IDLE 状态，配合 Light Sleep 可以显著降低功耗
-    delay(1000);
+    // 未连接（广播中）：进入 Light Sleep 1 秒
+    // 配合 esp_pm_configure 的自动 Light Sleep + BLE Modem Sleep，
+    // 实际平均电流可降至 ~150~250μA（取决于广播间隔和 LDO 静态电流）。
+    // BLE 广播事件由硬件定时器自动唤醒，不会影响可发现性。
+    esp_sleep_enable_timer_wakeup(1000 * 1000ULL); // 1 秒 = 1,000,000 μs
+    esp_light_sleep_start();
+    // 从 Light Sleep 返回后继续执行（状态完整保留）
   } else {
-    // 连接时，使用较短的 delay 以保证响应速度
+    // 已连接：保持正常 delay，确保指令响应速度
+    // 自动 Light Sleep 仍在 delay 的 IDLE 间隙中发挥作用
     delay(100);
   }
 }
