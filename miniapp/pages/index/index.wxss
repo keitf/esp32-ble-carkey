@@ -1,0 +1,287 @@
+.container {
+  background-color: #1a1a2e;
+  min-height: 100vh;
+  padding: 20px;
+  color: #fff;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-top: 20px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #999;
+}
+
+.card {
+  background-color: #16213e;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #0f3460;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.status-connected .status-badge {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid #22c55e;
+}
+
+.status-disconnected .status-badge {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+  border: 1px solid #9ca3af;
+}
+
+.device-info {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  color: #999;
+}
+
+.value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn:last-child {
+  margin-bottom: 0;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.btn-primary:active {
+  background-color: #2563eb;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #999;
+  border: 1px solid #999;
+}
+
+.btn-outline:active {
+  background-color: rgba(153, 153, 153, 0.1);
+}
+
+.btn-unlock {
+  background-color: #22c55e;
+  color: #fff;
+}
+
+.btn-unlock:active {
+  background-color: #16a34a;
+}
+
+.btn-lock {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.btn-lock:active {
+  background-color: #dc2626;
+}
+
+.btn-trunk {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
+.btn-trunk:active {
+  background-color: #d97706;
+}
+
+.btn-device {
+  background-color: transparent;
+  border: 1px solid #0f3460;
+  color: #999;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.device-name {
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.device-rssi {
+  font-size: 12px;
+  color: #999;
+}
+
+.device-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.info-text {
+  color: #60a5fa;
+  font-size: 14px;
+  text-align: center;
+}
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background-color: #16213e;
+  border-radius: 16px;
+  padding: 24px 20px;
+  width: 85%;
+  max-width: 320px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #fff;
+}
+
+.dialog-description {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 24px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.pin-input {
+  width: 100%;
+  height: 52px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  background-color: rgba(15, 52, 96, 0.4);
+  color: #fff;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 12px;
+  text-align: center;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s;
+}
+
+.pin-input:focus {
+  border-color: #3b82f6;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.dialog-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-cancel {
+  flex: 1;
+  background-color: transparent;
+  border: 1px solid #999;
+  color: #999;
+  padding: 10px;
+  margin-bottom: 0;
+}
+
+.btn-confirm {
+  flex: 1;
+  background-color: #3b82f6;
+  color: #fff;
+  padding: 10px;
+  margin-bottom: 0;
+}

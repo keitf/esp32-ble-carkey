@@ -1,0 +1,97 @@
+<view class="container">
+  <!-- 标题 -->
+  <view class="header">
+    <view class="title">车钥匙遥控</view>
+    <view class="subtitle">安全的蓝牙近场控制</view>
+  </view>
+
+  <!-- 控制面板 (置于连接状态上方) -->
+  <view wx:if="{{connected}}" class="card">
+    <view class="card-title">控制面板</view>
+    <view class="control-panel">
+      <button class="btn btn-unlock" data-command="UNLOCK" bindtap="executeCommand" disabled="{{isSendingCommand}}">
+        开锁
+      </button>
+      <button class="btn btn-lock" data-command="LOCK" bindtap="executeCommand" disabled="{{isSendingCommand}}">
+        关锁
+      </button>
+      <button class="btn btn-trunk" data-command="TRUNK" bindtap="executeCommand" disabled="{{isSendingCommand}}">
+        开后备箱
+      </button>
+    </view>
+  </view>
+
+  <!-- 连接状态卡片 -->
+  <view class="card">
+    <view class="card-title">连接状态</view>
+    <view class="card-content">
+      <view wx:if="{{connected}}" class="status-connected">
+        <view class="status-badge">已连接</view>
+        <view class="device-info">
+          <view class="info-row">
+            <text class="label">设备名称：</text>
+            <text class="value">{{selectedDevice.name}}</text>
+          </view>
+          <view class="info-row">
+            <text class="label">信号强度：</text>
+            <text class="value" style="color: {{signalColor || '#fff'}}">{{signalStrength}}%</text>
+          </view>
+        </view>
+        <button class="btn btn-outline" bindtap="disconnect">断开连接</button>
+      </view>
+      <view wx:else class="status-disconnected">
+        <view class="status-badge">未连接</view>
+        <button class="btn btn-primary" bindtap="scanDevices" disabled="{{scanning}}">
+          {{scanning ? '扫描中...' : '扫描设备'}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设备列表 (放在非连接状态的底部) -->
+  <view wx:if="{{!connected && devices.length > 0}}" class="card">
+    <view class="card-title">找到的设备</view>
+    <view class="device-list">
+      <view wx:for="{{devices}}" wx:key="deviceId" class="device-item">
+        <button class="btn btn-device" data-device-id="{{item.deviceId}}" bindtap="connectDevice">
+          <view class="device-name">{{item.name}}</view>
+          <view class="device-rssi">信号: {{item.RSSI}} dBm</view>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 安全提示 -->
+  <view class="card card-info">
+    <view class="info-text">✓ 所有通信均已加密，距离限制在 3-5 米内</view>
+  </view>
+
+  <!-- PIN 码对话框 -->
+  <view wx:if="{{showPinDialog}}" class="dialog-overlay">
+    <view class="dialog">
+      <view class="dialog-title">输入 PIN 码</view>
+      <view class="dialog-description">首次连接需要输入 6 位数字 PIN 码进行配对</view>
+
+      <input 
+        class="weui-input" 
+        password
+        type="text" 
+        placeholder="输入 6 位 PIN 码"
+        value="{{pin}}"
+        bindinput="onPinInput"
+        maxlength="6"
+        always-embed="{{true}}"
+        focus="{{true}}"
+      />
+      
+      <view wx:if="{{pinError}}" class="error-text">{{pinError}}</view>
+      
+      <view class="dialog-buttons">
+        <button class="btn btn-cancel" bindtap="closePinDialog" disabled="{{isConnecting}}">取消</button>
+        <button class="btn btn-confirm" bindtap="verifyAndConnect" disabled="{{isConnecting}}">
+          {{isConnecting ? '连接中...' : '连接'}}
+        </button>
+      </view>
+    </view>
+  </view>
+</view>

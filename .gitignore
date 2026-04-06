@@ -1,0 +1,43 @@
+# .gitignore for ESP32-C3 BLE Car Key Project
+
+# ---- macOS ----
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ---- VS Code ----
+.vscode/
+
+# ---- Node / pnpm ----
+node_modules/
+dist/
+.cache/
+pnpm-lock.yaml
+
+# ---- Android Build ----
+web_app/android/.gradle/
+web_app/android/app/build/
+web_app/android/build/
+web_app/android/local.properties
+web_app/android/captures/
+*.apk
+*.aab
+*.keystore
+
+# ---- WeChat MiniApp ----
+miniapp/project.private.config.json
+
+# ---- Arduino / IDE ----
+firmware/*.bin
+firmware/*.elf
+firmware/*.map
+
+# ---- Misc ----
+*.tar.gz
+*.zip
+*.log
+.manus-logs/
+.webdev/

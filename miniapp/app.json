@@ -1,0 +1,18 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/control/control"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1a1a2e",
+    "navigationBarTitleText": "车钥匙遥控",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#1a1a2e"
+  },
+  "permission": {
+    "scope.bluetooth": {
+      "desc": "需要蓝牙权限来控制车钥匙"
+    }
+  }
+}

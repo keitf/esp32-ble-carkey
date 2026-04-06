@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CarKeyBLE</string>
+    <string name="title_activity_main">CarKeyBLE</string>
+    <string name="package_name">com.carkey.ble</string>
+    <string name="custom_url_scheme">com.carkey.ble</string>
+</resources>
